@@ -1,74 +1,92 @@
-# CampusBridge — NSUT Placement Management System
+# CampusBridge
 
-A full-stack campus placement management portal built with **FastAPI**, **MySQL**, and modern **Glassmorphism UI** with authenticated portals for both Administrators and Students.
+## NSUT Placement Management System
 
----
+CampusBridge is a centralized placement management platform that connects students, administrators, and recruiting companies in one system. It replaces scattered spreadsheets and manual coordination with a structured, transparent, and data-driven placement workflow.
 
-## 🌟 Key Features
+## How the project works
 
-1. **Authentication System (NSUT ID & Password)**:
-   - **Admin Authentication**: Access to full database CRUD, drive scheduling, offer issuance, and user management.
-   - **Student Authentication**: Access to academic profile, real-time eligibility checking, job applications, and offer acceptance/rejection.
-   - SHA-256 hashed password storage in MySQL (`admin_users` and `student_users` tables).
-2. **Glassmorphism Design**:
-   - Modern dark gradient background with floating ambient light orbs.
-   - Translucent frosted glass cards (`backdrop-filter: blur(20px)`), glowing accents, and responsive layout.
-   - Interactive role switcher tabs on the login page with quick demo auto-fill.
-3. **Database Schema & Placement Pipeline**:
-   - Departments, Students, Skills, Student Skills
-   - Companies, Job Profiles, Job Skills, Interviewers
-   - Placement Drives, Drive Registrations, Assessments, Assessment Results
-   - Applications, Interview Rounds, Placement Offers, Analytics & Reports
+1. **Academic setup**
+   The administrator maintains departments, student profiles, CGPA, active backlogs, graduation years, and skills.
 
----
+2. **Recruiter and job management**
+   Companies, interviewers, job profiles, packages, locations, application deadlines, and required eligibility criteria are recorded in the system.
 
-## 🔑 Default Credentials
+3. **Automatic eligibility checking**
+   The system compares each student's academic details with a job's minimum CGPA, allowed backlogs, and eligible batch year to identify suitable opportunities.
 
-| Role | NSUT ID | Password | Access Level |
-|---|---|---|---|
-| **Administrator** | `ADMIN001` | `admin123` | Full admin privileges |
-| **Student** | `2024NSUT1001` | `student123` | Student portal (Rohan Sharma) |
+4. **Placement drive scheduling**
+   Administrators schedule placement drives, select the venue or online mode, and manage drive status.
 
-*(Admins can create additional Admin and Student login accounts at any time from the **Users & Auth** tab).*
+5. **Student applications**
+   Eligible students can view relevant jobs, apply for them, withdraw applications when required, and track application progress.
 
----
+6. **Assessments and interviews**
+   Administrators can create assessments, record results, schedule interview rounds, assign interviewers, and add round feedback.
 
-## 🚀 How to Run
+7. **Offer management**
+   Placement offers are linked to applications. Administrators can record package details and joining dates, while students can view and respond to their offers.
 
-### 1. Prerequisites
-- Python 3.10+
-- MySQL Server (running on `localhost:3306`)
+8. **Placement analytics**
+   The system generates reports for placed and unplaced students, department-wise performance, company packages, top packages, and overall placement percentage.
 
-### 2. Configure Database (if different from default)
-Default connection parameters in `db_connection.py`:
-- Host: `localhost`
-- User: `root`
-- Password: Supports `MYSQL_PASSWORD` env var, `nikhil`, or `27^Someswar_wirE`
-- Database: `placement_db` (created automatically on startup)
+## Main user roles
 
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+### Administrator
 
-### 4. Start the Application
-```bash
-uvicorn app:app --reload --port 8000
-```
+The administrator controls the complete placement lifecycle:
 
-### 5. Access the Web Application
-Open your web browser and go to:
-**http://localhost:8000**
+- Maintains academic and student records
+- Manages companies, jobs, skills, and placement drives
+- Checks eligibility and monitors applications
+- Coordinates assessments and interview rounds
+- Issues and updates placement offers
+- Reviews placement analytics and reports
+- Manages administrator and student accounts
 
-- **Landing Page**: `http://localhost:8000/`
-- **Login Page**: `http://localhost:8000/login`
-- **Admin Dashboard**: `http://localhost:8000/admin`
-- **Student Dashboard**: `http://localhost:8000/student`
+### Student
 
----
+The student gets a personalized placement workspace to:
 
-## 💻 Terminal CLI Mode (Optional)
-If you prefer running via the command line interface:
-```bash
-python main.py
-```
+- View their academic profile
+- See only the jobs for which they are eligible
+- Apply for opportunities
+- Track application and interview status
+- View placement offers and respond to them
+
+## Unique selling proposition (USP)
+
+### 1. Complete placement lifecycle in one platform
+
+CampusBridge manages the entire journey—from student data and job creation to eligibility, applications, interviews, offers, and final placement reports—without requiring separate tools.
+
+### 2. Eligibility-driven opportunities
+
+Students do not need to manually inspect every job. The system filters opportunities using academic rules such as CGPA, active backlogs, and graduation batch, making the process faster and fairer.
+
+### 3. Single source of truth
+
+Student, recruiter, job, interview, and offer data are connected through a relational MySQL database. This reduces duplicate records, inconsistent spreadsheets, and manual errors.
+
+### 4. Transparent student experience
+
+Students can independently see eligible jobs, submit applications, and follow their progress. Administrators and students work from the same up-to-date placement information.
+
+### 5. Actionable analytics
+
+Placement teams can evaluate outcomes by department, company, package, and placement percentage. These reports support better planning and institutional decision-making.
+
+### 6. Modular and extensible architecture
+
+The FastAPI backend exposes organized operations for academics, recruitment, applications, interviews, offers, and reports. The frontend is separated into role-based administrator and student dashboards, making future features easier to add.
+
+## Core technology
+
+- **Backend:** Python, FastAPI, Pydantic, and Uvicorn
+- **Database:** MySQL
+- **Frontend:** HTML, CSS, and vanilla JavaScript
+- **Architecture:** REST-style API with role-based browser dashboards
+
+## Project outcome
+
+CampusBridge provides a reliable digital foundation for managing campus placements. It improves coordination for administrators, gives students better visibility into opportunities, and turns placement data into useful insights for the institution.
