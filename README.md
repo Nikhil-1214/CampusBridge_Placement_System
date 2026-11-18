@@ -96,6 +96,6 @@ CampusBridge provides a reliable digital foundation for managing campus placemen
 1. Import this GitHub repository in Render.
 2. Select **Blueprint** and use `render.yaml`.
 3. Deploy the service.
-4. The Render disk mounted at `/var/data` stores `placement.db`, preserving records across deployments and restarts.
+4. The Render disk mounted at `/var/data` stores `placement.db`, preserving records across deployments and restarts. Persistent disks require Render's paid Starter plan or higher.
 
 The default accounts are `ADMIN001 / admin123` and `2024NSUT1001 / student123`.
