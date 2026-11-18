@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusBridge — NSUT Campus Placement Management System</title>
+    <!-- Typography: Outfit Sans-serif + Reenie Beanie Cursive -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FDFCF8;
+            --sage: #E8EFE8;
+            --sage-dark: #3F5E43;
+            --lavender: #EFEDF4;
+            --lavender-dark: #5C5278;
+            --coral: #FFB7B2;
+            --coral-hover: #FFA29C;
+            --coral-soft: #FFE4E1;
+            --lavender-soft: #E6E6FA;
+            --text-dark: #292524;
+            --text-muted: #78716C;
+            --text-light: #A8A29E;
+            --stone-50: #FAFAF9;
+            --stone-100: #F5F5F4;
+            --stone-200: #E7E5E4;
+            --stone-800: #292524;
+            --soft-shadow: 0 4px 20px -2px rgba(0,0,0,0.05);
+            --card-shadow: 0 10px 30px -4px rgba(41, 37, 36, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Special Component: Grain Texture Overlay ── */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.35;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ── Floating Background Blobs (6s Loop) ── */
+        .ambient-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBlob 6s ease-in-out infinite alternate;
+        }
+        .blob-1 {
+            width: 480px;
+            height: 480px;
+            background-color: var(--coral-soft);
+            top: -80px;
+            left: 50%;
+            transform: translateX(-65%);
+        }
+        .blob-2 {
+            width: 440px;
+            height: 440px;
+            background-color: var(--lavender-soft);
+            top: 120px;
+            left: 50%;
+            transform: translateX(10%);
+            animation-delay: -3s;
+        }
+        @keyframes floatBlob {
+            0% { transform: translateY(-10px) scale(1); }
+            100% { transform: translateY(10px) scale(1.04); }
+        }
+
+        /* ── Navigation: Floating Pill ── */
+        .nav-wrapper {
+            position: fixed;
+            top: 16px;
+            left: 0;
+            right: 0;
+            z-index: 40;
+            display: flex;
+            justify-content: center;
+            padding: 0 16px;
+        }
+        .nav-pill {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(231, 229, 228, 0.7);
+            border-radius: 9999px;
+            width: 100%;
+            max-width: 880px;
+            padding: 8px 12px 8px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+        /* Logo: Coral #FFB7B2 with white dot */
+        .brand-logo-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--coral);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(255, 183, 178, 0.5);
+        }
+        .brand-logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            color: var(--text-dark);
+        }
+        .brand-name span {
+            color: #E11D48;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover {
+            color: var(--text-dark);
+        }
+        .nav-cta {
+            background-color: var(--stone-800);
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 9px 20px;
+            border-radius: 9999px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+        .nav-cta:hover {
+            background-color: #1c1917;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(41, 37, 36, 0.15);
+        }
+
+        /* ── Hero Section ── */
+        .hero-section {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 140px 20px 50px;
+            max-width: 940px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hero-pill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--stone-50);
+            border: 1px solid var(--stone-200);
+            padding: 6px 18px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .hero-pill-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--coral);
+        }
+        h1.hero-title {
+            font-size: clamp(38px, 6vw, 68px);
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            text-transform: none; /* Sentence-case */
+        }
+        .cursive-accent {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 1.3em;
+            font-weight: 400;
+            color: #F87171;
+            display: inline-block;
+            transform: rotate(-2deg);
+            margin: 0 6px;
+            vertical-align: middle;
+        }
+        p.hero-subtitle {
+            font-size: clamp(16px, 2.5vw, 18px);
+            color: var(--text-muted);
+            max-width: 580px;
+            margin: 0 auto 36px;
+            line-height: 1.65;
+            font-weight: 400;
+        }
+        .hero-cta-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn-pill-primary {
+            background-color: var(--coral);
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 600;
+            padding: 15px 32px;
+            border-radius: 9999px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px -2px rgba(255, 183, 178, 0.6);
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-pill-primary:hover {
+            background-color: var(--coral-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -4px rgba(255, 183, 178, 0.8);
+        }
+        .btn-pill-secondary {
+            background-color: #FFFFFF;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 500;
+            padding: 15px 28px;
+            border-radius: 9999px;
+            text-decoration: none;
+            border: 1px solid var(--stone-200);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-pill-secondary:hover {
+            background-color: var(--stone-50);
+            border-color: #D6D3D1;
+            transform: translateY(-2px);
+        }
+
+        /* ── Metric Highlights Bar ── */
+        .metrics-strip {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 48px;
+            width: 100%;
+        }
+        .metric-pill {
+            background: #FFFFFF;
+            border: 1px solid var(--stone-200);
+            padding: 10px 22px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .metric-pill strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* ── Main Portals Section ── */
+        .portals-section {
+            position: relative;
+            z-index: 10;
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 50px 24px 60px;
+        }
+        .section-header {
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto 44px;
+        }
+        .section-tag {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+        }
+        h2.section-heading {
+            font-size: clamp(30px, 4.5vw, 44px);
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            color: var(--text-dark);
+            margin-bottom: 14px;
+        }
+        p.section-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .portals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+        .portal-role-card {
+            background-color: #FFFFFF;
+            border: 1px solid var(--stone-200);
+            border-radius: 2.5rem; /* 40px */
+            padding: 38px 34px;
+            box-shadow: var(--soft-shadow);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .portal-role-card:hover {
+            transform: translateY(-4px);
+            border-color: #D6D3D1;
+            box-shadow: 0 16px 36px -8px rgba(41, 37, 36, 0.08);
+        }
+        .portal-card-top {
+            margin-bottom: 24px;
+        }
+        .portal-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 18px;
+        }
+        .badge-admin {
+            background: rgba(41, 37, 36, 0.06);
+            color: var(--stone-800);
+            border: 1px solid var(--stone-200);
+        }
+        .badge-student {
+            background: rgba(255, 183, 178, 0.25);
+            color: #991B1B;
+            border: 1px solid rgba(255, 183, 178, 0.5);
+        }
+        .portal-role-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        .portal-role-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .portal-role-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .portal-role-list li {
+            font-size: 14px;
+            color: #44403C;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+        }
+        .portal-role-list li::before {
+            content: "•";
+            color: var(--coral);
+            font-size: 18px;
+            line-height: 1;
+        }
+        .btn-portal-action {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            padding: 14px;
+            border-radius: 9999px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            font-family: 'Outfit', sans-serif;
+            border: none;
+        }
+        .btn-admin-pill {
+            background-color: var(--stone-800);
+            color: #FFFFFF;
+        }
+        .btn-admin-pill:hover {
+            background-color: #000000;
+            transform: scale(1.02);
+            box-shadow: 0 4px 14px rgba(41, 37, 36, 0.15);
+        }
+        .btn-student-pill {
+            background-color: var(--coral);
+            color: var(--text-dark);
+        }
+        .btn-student-pill:hover {
+            background-color: var(--coral-hover);
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(255, 183, 178, 0.6);
+        }
+
+        /* ── Placement Workflow / Horizontal Scroll ── */
+        .content-section {
+            position: relative;
+            z-index: 10;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+        .scroll-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            padding: 0 8px;
+        }
+        .scroll-hint {
+            font-size: 13px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .horizontal-scroll-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 12px 8px 32px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .horizontal-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+        .scenario-card {
+            width: 288px;
+            min-width: 288px;
+            height: 160px;
+            background-color: #FFFFFF;
+            border-radius: 24px; /* rounded-3xl */
+            padding: 24px;
+            border: 1px solid var(--stone-100);
+            box-shadow: var(--soft-shadow);
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        .scenario-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px -6px rgba(41, 37, 36, 0.08);
+            border-color: var(--stone-200);
+        }
+        .scenario-timestamp {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+        .scenario-text {
+            font-size: 19px;
+            font-weight: 500;
+            color: var(--stone-800);
+            line-height: 1.35;
+            letter-spacing: -0.01em;
+            transition: color 0.3s ease;
+        }
+        /* Pastel accent color transitions on hover */
+        .scenario-card:nth-child(1):hover .scenario-text { color: #EA580C; }
+        .scenario-card:nth-child(2):hover .scenario-text { color: #4B6F55; }
+        .scenario-card:nth-child(3):hover .scenario-text { color: #6D5C92; }
+        .scenario-card:nth-child(4):hover .scenario-text { color: #D97706; }
+        .scenario-card:nth-child(5):hover .scenario-text { color: #0284C7; }
+
+        /* ── App Experience Preview (3-Phone Cascading Stack) ── */
+        .preview-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 40px 0 90px;
+            position: relative;
+        }
+        .phone-mockup {
+            border-radius: 44px;
+            background: #FFFFFF;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .phone-speaker-bar {
+            width: 72px;
+            height: 5px;
+            background: rgba(41, 37, 36, 0.15);
+            border-radius: 9999px;
+            margin: 16px auto 12px;
+        }
+        /* Center Phone: 300x620px, opaque, Coral Apply button */
+        .phone-center {
+            width: 300px;
+            height: 620px;
+            opacity: 1;
+            border: 8px solid var(--stone-800);
+            box-shadow: 0 25px 60px -15px rgba(41, 37, 36, 0.16);
+            z-index: 3;
+            background-color: var(--bg-primary);
+        }
+        /* Left Phone: 280x580px, 80% opacity, +48px translateY, Sage */
+        .phone-left {
+            width: 280px;
+            height: 580px;
+            opacity: 0.8;
+            transform: translateY(48px);
+            border: 8px solid #44403C;
+            background-color: var(--sage);
+            z-index: 2;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.06);
+        }
+        /* Right Phone: 280x580px, 80% opacity, +96px translateY, Lavender */
+        .phone-right {
+            width: 280px;
+            height: 580px;
+            opacity: 0.8;
+            transform: translateY(96px);
+            border: 8px solid #44403C;
+            background-color: var(--lavender);
+            z-index: 2;
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.06);
+        }
+
+        .screen-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 33px);
+            justify-content: space-between;
+        }
+        .screen-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        /* Pulsing Circle & Action */
+        .breathe-visualizer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: auto 0;
+            position: relative;
+        }
+        .breathe-outer-ring {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: rgba(255, 183, 178, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseHalo 4s ease-in-out infinite;
+        }
+        .breathe-inner-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--coral);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(255, 183, 178, 0.6);
+            animation: breatheScale 4s ease-in-out infinite;
+            cursor: pointer;
+            text-align: center;
+        }
+        .breathe-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            letter-spacing: 0.3px;
+        }
+        .breathe-sub {
+            font-size: 11px;
+            color: rgba(41, 37, 36, 0.7);
+            margin-top: 2px;
+        }
+        @keyframes pulseHalo {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.18); opacity: 0.8; }
+        }
+        @keyframes breatheScale {
+            0%, 100% { transform: scale(0.96); }
+            50% { transform: scale(1.04); }
+        }
+        .screen-card-row {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 14px 18px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        /* ── Placed Student Diary Entry Testimonials (Rotated Notes) ── */
+        .diary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            margin-top: 16px;
+        }
+        .diary-card {
+            background-color: #FFFFFF;
+            border-radius: 2rem; /* 32px */
+            padding: 36px 32px;
+            border: 1px solid var(--stone-100);
+            box-shadow: var(--soft-shadow);
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+            position: relative;
+        }
+        .diary-card.rot-right {
+            transform: rotate(1deg);
+        }
+        .diary-card.rot-left {
+            transform: rotate(-1deg);
+        }
+        .diary-card:hover {
+            transform: rotate(0deg) translateY(-4px);
+            box-shadow: 0 16px 36px -8px rgba(41, 37, 36, 0.08);
+        }
+        .diary-date {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+        .diary-text {
+            font-size: 17px;
+            color: #44403C;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        .diary-signature-divider {
+            width: 32px;
+            height: 1px;
+            background-color: #D6D3D1;
+            margin: 24px 0 10px;
+        }
+        .diary-signature {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 26px;
+            color: var(--text-muted);
+            font-weight: 400;
+            display: block;
+        }
+
+        /* ── Special Component: Interactive FAQ Accordion ── */
+        .faq-container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            background-color: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid var(--stone-100);
+            box-shadow: var(--soft-shadow);
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+        .faq-item.active {
+            border-color: var(--stone-200);
+        }
+        .faq-header {
+            padding: 24px;
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: color 0.2s ease;
+        }
+        .faq-header:hover {
+            color: #000;
+        }
+        .faq-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-muted);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+            color: var(--text-dark);
+        }
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 500ms ease-in-out;
+        }
+        .faq-body {
+            padding: 0 24px 24px;
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        /* ── Conversion / Direct Portal Access Section ── */
+        .waitlist-section {
+            position: relative;
+            z-index: 10;
+            max-width: 980px;
+            margin: 30px auto 90px;
+            padding: 0 20px;
+        }
+        .waitlist-card {
+            background: #FFFFFF;
+            border-radius: 3rem; /* 48px */
+            padding: 60px 32px;
+            text-align: center;
+            border: 1px solid var(--stone-100);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .waitlist-blobs {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .w-blob-1 {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: var(--coral-soft);
+            filter: blur(80px);
+            opacity: 0.55;
+            top: -60px;
+            left: -40px;
+        }
+        .w-blob-2 {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: var(--lavender-soft);
+            filter: blur(80px);
+            opacity: 0.55;
+            bottom: -80px;
+            right: -60px;
+        }
+        .waitlist-content {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Dark stone #292524 rounded-square icon with coral dot */
+        .waitlist-icon-badge {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background-color: var(--stone-800);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 20px rgba(41, 37, 36, 0.12);
+        }
+        .waitlist-coral-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: var(--coral);
+        }
+        h2.waitlist-title {
+            font-size: clamp(32px, 4.5vw, 42px);
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+        p.waitlist-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+        .dual-portal-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .waitlist-note {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 8px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid var(--stone-200);
+            padding: 44px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 10;
+        }
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            color: var(--text-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .footer-tagline {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* ── Reveal on Scroll Animation ── */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0, 0, 1), transform 0.8s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .reveal-on-scroll.is-revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Mobile Responsiveness ── */
+        @media (max-width: 860px) {
+            .portals-grid {
+                grid-template-columns: 1fr;
+            }
+            .preview-wrapper {
+                flex-direction: column;
+                align-items: center;
+                gap: 28px;
+                padding-bottom: 50px;
+            }
+            .phone-left, .phone-right {
+                transform: none;
+                opacity: 0.95;
+                width: 290px;
+                height: 480px;
+            }
+            .phone-center {
+                width: 290px;
+                height: 520px;
+            }
+            .diary-grid {
+                grid-template-columns: 1fr;
+            }
+            .diary-card.rot-right, .diary-card.rot-left {
+                transform: none;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Global Paper Grain Texture Overlay -->
+<div class="grain-overlay" aria-hidden="true"></div>
+
+<!-- Ambient Floating Blobs (6s loop) -->
+<div class="ambient-blob blob-1"></div>
+<div class="ambient-blob blob-2"></div>
+
+<!-- ── Navigation: Floating Pill ── -->
+<div class="nav-wrapper">
+    <nav class="nav-pill">
+        <a href="#" class="nav-brand">
+            <div class="brand-logo-circle">
+                <div class="brand-logo-dot"></div>
+            </div>
+            <span class="brand-name">Campus<span>Bridge</span></span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#portals" class="nav-link">Portals</a>
+            <a href="#milestones" class="nav-link">Workflow</a>
+            <a href="#experience" class="nav-link">System Demo</a>
+            <a href="#stories" class="nav-link">Placed Stories</a>
+            <a href="#faq" class="nav-link">FAQ</a>
+        </div>
+
+        <a href="login.html" class="nav-cta" onclick="openLogin('admin')">
+            Portal Sign In
+        </a>
+    </nav>
+</div>
+
+<!-- ── Hero Section ── -->
+<section class="hero-section">
+    <div class="hero-pill-tag">
+        <span class="hero-pill-dot"></span>
+        Netaji Subhas University of Technology &nbsp;·&nbsp; Placement Portal
+    </div>
+
+    <h1 class="hero-title">
+        Campus placement management made <span class="cursive-accent">effortless</span>
+    </h1>
+
+    <p class="hero-subtitle">
+        Connecting NSUT candidates, academic departments, and hiring companies with real-time criteria checking, interview rounds, and transparent offer tracking.
+    </p>
+
+    <div class="hero-cta-group">
+        <a href="#portals" class="btn-pill-primary">
+            Explore Portals &darr;
+        </a>
+        <a href="login.html?role=admin" class="btn-pill-secondary">
+            Admin Login &rarr;
+        </a>
+    </div>
+
+    <div class="metrics-strip">
+        <div class="metric-pill">
+            <span>🏛️</span>
+            <span><strong>15</strong> Database Tables</span>
+        </div>
+        <div class="metric-pill">
+            <span>⚡</span>
+            <span><strong>Instant</strong> CGPA Eligibility</span>
+        </div>
+        <div class="metric-pill">
+            <span>🎯</span>
+            <span><strong>Multi-Round</strong> Interview Logging</span>
+        </div>
+        <div class="metric-pill">
+            <span>🎁</span>
+            <span><strong>Digital</strong> Offer Acceptance</span>
+        </div>
+    </div>
+</section>
+
+<!-- ── Portals: Original Placement System Content ── -->
+<section class="portals-section" id="portals">
+    <div class="section-header reveal-on-scroll">
+        <span class="section-tag">Role-Based Access</span>
+        <h2 class="section-heading">Select your portal to proceed directly</h2>
+        <p class="section-description">
+            Sign in with your verified NSUT ID to manage placement drives, check company eligibility, and issue or accept offers.
+        </p>
+    </div>
+
+    <div class="portals-grid reveal-on-scroll">
+        <!-- ADMIN PORTAL CARD -->
+        <div class="portal-role-card">
+            <div class="portal-card-top">
+                <span class="portal-role-badge badge-admin">💼 Administrator Access</span>
+                <h3 class="portal-role-title">Admin Portal</h3>
+                <p class="portal-role-desc">Full management privileges adhering to the database:</p>
+                <ul class="portal-role-list">
+                    <li>Manage departments, students &amp; skills</li>
+                    <li>Manage companies &amp; job profiles</li>
+                    <li>Schedule placement drives &amp; assessments</li>
+                    <li>Conduct interview rounds &amp; issue offers</li>
+                    <li>View placement analytics &amp; department reports</li>
+                    <li>Assign NSUT IDs &amp; manage user credentials</li>
+                </ul>
+            </div>
+            <button class="btn-portal-action btn-admin-pill" onclick="openLogin('admin')">
+                Enter as Admin &rarr;
+            </button>
+        </div>
+
+        <!-- STUDENT PORTAL CARD -->
+        <div class="portal-role-card">
+            <div class="portal-card-top">
+                <span class="portal-role-badge badge-student">🎓 Student Access</span>
+                <h3 class="portal-role-title">Student Portal</h3>
+                <p class="portal-role-desc">Student privileges adhering to student permissions:</p>
+                <ul class="portal-role-list">
+                    <li>View academic profile &amp; graduation details</li>
+                    <li>View eligible jobs based on CGPA &amp; backlogs</li>
+                    <li>Apply for openings with real-time criteria check</li>
+                    <li>Track active application statuses &amp; withdraw</li>
+                    <li>Review, accept, or decline placement offers</li>
+                    <li>Secure single-session NSUT ID authentication</li>
+                </ul>
+            </div>
+            <button class="btn-portal-action btn-student-pill" onclick="openLogin('student')">
+                Enter as Student &rarr;
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ── Horizontal Placement Workflow / Pipeline Scroll ── -->
+<section class="content-section" id="milestones">
+    <div class="scroll-section-header">
+        <div>
+            <span class="section-tag">Recruitment Workflow</span>
+            <h2 class="section-heading" style="margin-bottom: 0;">Five stages of campus recruitment</h2>
+        </div>
+        <div class="scroll-hint">
+            <span>Scroll gently</span> &rarr;
+        </div>
+    </div>
+
+    <div class="horizontal-scroll-container">
+        <!-- Card 1 -->
+        <div class="scenario-card">
+            <span class="scenario-timestamp">Stage 01 · Matching</span>
+            <p class="scenario-text">Automated CGPA &amp; backlog eligibility validation</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="scenario-card">
+            <span class="scenario-timestamp">Stage 02 · Registration</span>
+            <p class="scenario-text">Direct application to active company openings</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="scenario-card">
+            <span class="scenario-timestamp">Stage 03 · Drives</span>
+            <p class="scenario-text">Placement drive scheduling &amp; online assessment tests</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="scenario-card">
+            <span class="scenario-timestamp">Stage 04 · Interviews</span>
+            <p class="scenario-text">Multi-round technical &amp; HR evaluation logging</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="scenario-card">
+            <span class="scenario-timestamp">Stage 05 · Placement</span>
+            <p class="scenario-text">Digital placement offer letter issuance &amp; acceptance</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── App Experience Preview (3-Phone Cascading Stack) ── -->
+<section class="content-section" id="experience">
+    <div class="section-header reveal-on-scroll">
+        <span class="section-tag">System Interface</span>
+        <h2 class="section-heading">Designed for precision and clarity</h2>
+        <p class="section-description">
+            Clean status tracking, automatic package calculations, and frictionless role switching for recruiters and candidates alike.
+        </p>
+    </div>
+
+    <div class="preview-wrapper reveal-on-scroll">
+        <!-- Left Phone (Sage #E8EFE8, +48px translateY) -->
+        <div class="phone-mockup phone-left">
+            <div class="phone-speaker-bar"></div>
+            <div class="screen-content">
+                <div class="screen-top-bar">
+                    <span>Admin Panel</span>
+                    <span>Drives</span>
+                </div>
+                <div style="margin: 36px 0;">
+                    <div style="font-size: 24px; font-weight: 600; color: #374151; margin-bottom: 6px;">Drive Status</div>
+                    <div style="font-size: 13px; color: #6B7280;">Google India &middot; Software Development Engineer</div>
+                </div>
+                <div class="screen-card-row" style="background: rgba(255,255,255,0.75);">
+                    <span>Shortlisted</span>
+                    <span style="font-weight: 600;">34 Candidates</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Phone (Opaque 300x620px, Coral Action Button) -->
+        <div class="phone-mockup phone-center">
+            <div class="phone-speaker-bar"></div>
+            <div class="screen-content">
+                <div class="screen-top-bar">
+                    <span>Student Portal</span>
+                    <span style="color: #E11D48; font-weight: 600;">● Eligible</span>
+                </div>
+
+                <div class="breathe-visualizer">
+                    <div class="breathe-outer-ring">
+                        <div class="breathe-inner-circle" onclick="openLogin('student')">
+                            <span class="breathe-label">Apply Now</span>
+                            <span class="breathe-sub">CGPA 8.85</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="screen-card-row">
+                    <span>Active Package</span>
+                    <span style="color: #292524; font-weight: 600;">28.50 LPA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Phone (Lavender #EFEDF4, +96px translateY) -->
+        <div class="phone-mockup phone-right">
+            <div class="phone-speaker-bar"></div>
+            <div class="screen-content">
+                <div class="screen-top-bar">
+                    <span>Offers</span>
+                    <span>Issued</span>
+                </div>
+                <div style="margin: 36px 0;">
+                    <div style="font-size: 24px; font-weight: 600; color: #4B5563; margin-bottom: 6px;">Offer Letter</div>
+                    <div style="font-size: 13px; color: #6B7280;">Microsoft IDC &middot; Cloud Engineer</div>
+                </div>
+                <div class="screen-card-row" style="background: rgba(255,255,255,0.75);">
+                    <span>Status</span>
+                    <span style="font-weight: 600; color: #047857;">Accepted</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Placed Student Diary Entry Testimonials (Rotated Notes) ── -->
+<section class="content-section" id="stories">
+    <div class="section-header reveal-on-scroll">
+        <span class="section-tag">Candidate Experiences</span>
+        <h2 class="section-heading">Notes from placed NSUT students</h2>
+        <p class="section-description">
+            Real feedback from candidates and placement coordinators using CampusBridge.
+        </p>
+    </div>
+
+    <div class="diary-grid reveal-on-scroll">
+        <!-- Entry 1 (rot-right) -->
+        <div class="diary-card rot-right">
+            <div class="diary-date">Day four &nbsp;·&nbsp; Google India Placement</div>
+            <p class="diary-text">
+                "Having all eligible openings listed with exact CGPA cutoffs saved me from missing deadlines. Applying was as simple as one click."
+            </p>
+            <div class="diary-signature-divider"></div>
+            <span class="diary-signature">rohan sharma, cse '26</span>
+        </div>
+
+        <!-- Entry 2 (rot-left) -->
+        <div class="diary-card rot-left">
+            <div class="diary-date">Drive review &nbsp;·&nbsp; Department Coordinator</div>
+            <p class="diary-text">
+                "Managing 400+ student applications across CSE and IT used to require chaotic spreadsheets. CampusBridge turned it into a smooth 10-minute task."
+            </p>
+            <div class="diary-signature-divider"></div>
+            <span class="diary-signature">priya verma, placement cell</span>
+        </div>
+
+        <!-- Entry 3 (rot-left) -->
+        <div class="diary-card rot-left">
+            <div class="diary-date">Day eighteen &nbsp;·&nbsp; Microsoft IDC Drive</div>
+            <p class="diary-text">
+                "I tracked each interview round feedback in real time, and received the formal placement offer directly in my student portal."
+            </p>
+            <div class="diary-signature-divider"></div>
+            <span class="diary-signature">ankit singh, it '26</span>
+        </div>
+
+        <!-- Entry 4 (rot-right) -->
+        <div class="diary-card rot-right">
+            <div class="diary-date">Recruitment cycle &nbsp;·&nbsp; Admin Operations</div>
+            <p class="diary-text">
+                "Instant department-wise analytics and company package summaries gave our leadership clear placement percentages in seconds."
+            </p>
+            <div class="diary-signature-divider"></div>
+            <span class="diary-signature">dr. rajesh mehta, tpo</span>
+        </div>
+    </div>
+</section>
+
+<!-- ── Special Component: Interactive FAQ Accordion ── -->
+<section class="content-section" id="faq">
+    <div class="section-header reveal-on-scroll">
+        <span class="section-tag">Assistance</span>
+        <h2 class="section-heading">Frequently asked questions</h2>
+    </div>
+
+    <div class="faq-container reveal-on-scroll">
+        <!-- FAQ 1 -->
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <span>How do students log into the portal?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-content">
+                <div class="faq-body">
+                    Students log in using their assigned NSUT ID and password. The account is linked directly to their academic record in the database (CGPA, active backlogs, department, and graduation year).
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <span>How is student eligibility computed?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-content">
+                <div class="faq-body">
+                    Eligibility is checked in real time using the MySQL backend. A student is eligible if their CGPA meets the minimum CGPA, active backlogs are within the allowed limit, graduation year is within the eligible batch, and application deadline has not passed.
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <span>What are the default test credentials?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-content">
+                <div class="faq-body">
+                    You can test the system right now with:
+                    <br>&bull; <b>Admin:</b> NSUT ID <code>ADMIN001</code> &middot; Password <code>admin123</code>
+                    <br>&bull; <b>Student:</b> NSUT ID <code>2024NSUT1001</code> &middot; Password <code>student123</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+                <span>Can an administrator register new students and accounts?</span>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-content">
+                <div class="faq-body">
+                    Yes. In the Admin Panel, navigate to the <b>Users &amp; Auth</b> tab to create new administrator accounts and register student login accounts with custom NSUT IDs and passwords.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Conversion / Direct Portal Access Section ── -->
+<section class="waitlist-section reveal-on-scroll">
+    <div class="waitlist-card">
+        <div class="waitlist-blobs">
+            <div class="w-blob-1"></div>
+            <div class="w-blob-2"></div>
+        </div>
+
+        <div class="waitlist-content">
+            <!-- Dark stone rounded-square with Coral dot -->
+            <div class="waitlist-icon-badge">
+                <div class="waitlist-coral-dot"></div>
+            </div>
+
+            <h2 class="waitlist-title">Ready to access your portal?</h2>
+            <p class="waitlist-subtitle">
+                Select your designated role to enter the placement portal with your verified NSUT ID.
+            </p>
+
+            <div class="dual-portal-btns">
+                <button class="btn-pill-primary" style="background-color: var(--stone-800); color: #fff;" onclick="openLogin('admin')">
+                    💼 Sign In as Admin
+                </button>
+                <button class="btn-pill-primary" onclick="openLogin('student')">
+                    🎓 Sign In as Student
+                </button>
+            </div>
+            <p class="waitlist-note">Secure campus credential verification powered by MySQL and FastAPI.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+    <a href="#" class="footer-logo">
+        <div class="brand-logo-circle" style="width: 24px; height: 24px;">
+            <div class="brand-logo-dot" style="width: 6px; height: 6px;"></div>
+        </div>
+        <span>CampusBridge</span>
+    </a>
+    <span class="footer-tagline">empowering NSUT futures</span>
+    <p>&copy; 2026 Campus Placement Management System &middot; NSUT Delhi &middot; All rights reserved.</p>
+</footer>
+
+<script>
+// Reveal on scroll
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+        }
+    });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal-on-scroll').forEach(el => revealObserver.observe(el));
+
+// Interactive FAQ Accordion
+function toggleFaq(headerEl) {
+    const item = headerEl.parentElement;
+    const content = item.querySelector('.faq-content');
+    const isActive = item.classList.contains('active');
+
+    // Close all other FAQs
+    document.querySelectorAll('.faq-item').forEach(other => {
+        if (other !== item) {
+            other.classList.remove('active');
+            other.querySelector('.faq-content').style.maxHeight = null;
+        }
+    });
+
+    if (isActive) {
+        item.classList.remove('active');
+        content.style.maxHeight = null;
+    } else {
+        item.classList.add('active');
+        content.style.maxHeight = content.scrollHeight + 'px';
+    }
+}
+
+function openLogin(role) {
+    sessionStorage.setItem("loginRole", role);
+    const isStatic = (window.location.port !== "8000" || window.location.protocol === "file:" || window.location.pathname.endsWith(".html"));
+    window.location.href = (isStatic ? "login.html" : "/login") + "?role=" + role;
+}
+</script>
+</body>
+</html>

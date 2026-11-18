@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusBridge — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FDFCF8;
+            --sage: #E8EFE8;
+            --lavender: #EFEDF4;
+            --coral: #FFB7B2;
+            --coral-hover: #FFA29C;
+            --coral-soft: #FFE4E1;
+            --lavender-soft: #E6E6FA;
+            --text-dark: #292524;
+            --text-muted: #78716C;
+            --text-light: #A8A29E;
+            --stone-50: #FAFAF9;
+            --stone-100: #F5F5F4;
+            --stone-200: #E7E5E4;
+            --stone-800: #292524;
+            --soft-shadow: 0 4px 20px -2px rgba(0,0,0,0.05);
+            --card-shadow: 0 10px 35px -5px rgba(41, 37, 36, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 24px;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── Special Component: Grain Overlay ── */
+        .grain-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.35;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* ── Floating Background Blobs (6s loop) ── */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBlob 6s ease-in-out infinite alternate;
+        }
+        .blob-1 {
+            width: 440px;
+            height: 440px;
+            background-color: var(--coral-soft);
+            top: -100px;
+            left: 20%;
+        }
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background-color: var(--lavender-soft);
+            bottom: -80px;
+            right: 25%;
+            animation-delay: -3s;
+        }
+        @keyframes floatBlob {
+            0% { transform: translateY(-10px) scale(1); }
+            100% { transform: translateY(10px) scale(1.05); }
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 10;
+            background: #FFFFFF;
+            border-radius: 2.5rem; /* 40px */
+            padding: 44px 40px;
+            width: 100%;
+            max-width: 460px;
+            border: 1px solid var(--stone-200);
+            box-shadow: var(--card-shadow);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 22px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text-dark); }
+
+        /* Role switcher tabs */
+        .tab-switcher {
+            display: flex;
+            background: var(--stone-100);
+            border-radius: 9999px;
+            padding: 4px;
+            margin-bottom: 24px;
+            gap: 4px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 14px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .tab-btn.active.admin {
+            background: #FFFFFF;
+            color: var(--text-dark);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .tab-btn.active.student {
+            background: var(--coral);
+            color: var(--text-dark);
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(255, 183, 178, 0.5);
+        }
+
+        .header-section {
+            margin-bottom: 24px;
+        }
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .brand-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--coral);
+        }
+        h2.login-title {
+            color: var(--text-dark);
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .cursive-accent {
+            font-family: 'Reenie Beanie', cursive;
+            font-size: 1.25em;
+            color: #F87171;
+            margin-left: 4px;
+        }
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 13px 18px;
+            border: 1px solid var(--stone-200);
+            border-radius: 14px;
+            background: var(--stone-50);
+            color: var(--text-dark);
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        .form-group input:focus {
+            background: #FFFFFF;
+            border-color: var(--coral);
+            box-shadow: 0 0 0 3px rgba(255, 183, 178, 0.35);
+        }
+        .form-group input::placeholder {
+            color: var(--text-light);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9999px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #FFFFFF;
+            background-color: var(--stone-800);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s;
+            margin-top: 8px;
+            box-shadow: 0 4px 14px rgba(41, 37, 36, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-submit:hover {
+            transform: scale(1.03);
+            background-color: #000000;
+        }
+        .btn-submit.student-mode {
+            background-color: var(--coral);
+            color: var(--text-dark);
+            box-shadow: 0 4px 16px rgba(255, 183, 178, 0.5);
+        }
+        .btn-submit.student-mode:hover {
+            background-color: var(--coral-hover);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .alert-box {
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .alert-error {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+        }
+        .alert-success {
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            color: #065F46;
+        }
+
+        /* Demo credentials card */
+        .cred-helper {
+            margin-top: 24px;
+            background: var(--stone-50);
+            border: 1px solid var(--stone-200);
+            border-radius: 16px;
+            padding: 14px 18px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .cred-header {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cred-item {
+            color: var(--text-muted);
+        }
+        .cred-badge {
+            background: #FFFFFF;
+            border: 1px solid var(--stone-200);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .cred-fill-btn {
+            background: #FFFFFF;
+            border: 1px solid var(--stone-200);
+            color: var(--text-dark);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cred-fill-btn:hover {
+            background: var(--stone-100);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(41, 37, 36, 0.3);
+            border-top-color: var(--text-dark);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="grain-overlay" aria-hidden="true"></div>
+<div class="ambient-blob blob-1"></div>
+<div class="ambient-blob blob-2"></div>
+
+<div class="login-card" id="loginCard">
+    <a class="back-link" onclick="goHome()">&#8592; Back to Softly</a>
+
+    <!-- Role Switcher Tabs -->
+    <div class="tab-switcher">
+        <button class="tab-btn active admin" id="adminTab" onclick="setRole('admin')">
+            <span>🛡️</span> Admin Portal
+        </button>
+        <button class="tab-btn student" id="studentTab" onclick="setRole('student')">
+            <span>🎓</span> Student Portal
+        </button>
+    </div>
+
+    <div class="header-section">
+        <div class="brand-badge">
+            <span class="brand-badge-dot"></span>
+            <span id="roleBadge">Administrator Access</span>
+        </div>
+        <h2 class="login-title" id="loginTitle">
+            Welcome <span class="cursive-accent">back</span>
+        </h2>
+        <p class="subtitle" id="loginSubtitle">Sign in with your NSUT Administrator ID &amp; Password</p>
+    </div>
+
+    <div id="errorAlert" class="alert-box alert-error"></div>
+    <div id="successAlert" class="alert-box alert-success"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label for="nsut_id">NSUT ID</label>
+            <input type="text" id="nsut_id" placeholder="e.g. ADMIN001" required autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-submit" id="submitBtn">
+            <span>Sign In</span>
+        </button>
+    </form>
+
+    <!-- Credential Quick-Fill Helper -->
+    <div class="cred-helper">
+        <div class="cred-header">
+            <span id="credHelperLabel">Default Admin Access</span>
+            <button class="cred-fill-btn" type="button" onclick="autoFillDemoCreds()">Auto-fill</button>
+        </div>
+        <div class="cred-item" id="credHelperBody">
+            NSUT ID: <span class="cred-badge">ADMIN001</span> &nbsp;·&nbsp; Password: <span class="cred-badge">admin123</span>
+        </div>
+    </div>
+</div>
+
+<script>
+function getApiBase() {
+    if (window.location.port === "8000") {
+        return window.location.origin + "/api";
+    }
+    const host = (window.location.hostname && window.location.hostname !== "") ? window.location.hostname : "127.0.0.1";
+    return `http://${host}:8000/api`;
+}
+const API = getApiBase();
+
+let currentRole = "admin";
+
+function init() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedRole = urlParams.get("role") || sessionStorage.getItem("loginRole") || "admin";
+    setRole(requestedRole === "student" ? "student" : "admin");
+}
+
+function setRole(role) {
+    currentRole = role;
+    sessionStorage.setItem("loginRole", role);
+
+    const adminTab = document.getElementById("adminTab");
+    const studentTab = document.getElementById("studentTab");
+    const badge = document.getElementById("roleBadge");
+    const subtitle = document.getElementById("loginSubtitle");
+    const submitBtn = document.getElementById("submitBtn");
+    const nsutInput = document.getElementById("nsut_id");
+    const helperLabel = document.getElementById("credHelperLabel");
+    const helperBody = document.getElementById("credHelperBody");
+    const errorAlert = document.getElementById("errorAlert");
+    const successAlert = document.getElementById("successAlert");
+
+    errorAlert.style.display = "none";
+    successAlert.style.display = "none";
+
+    if (role === "student") {
+        adminTab.className = "tab-btn admin";
+        studentTab.className = "tab-btn active student";
+        badge.textContent = "Student Access";
+        subtitle.textContent = "Sign in with your NSUT Student ID & Password";
+        submitBtn.className = "btn-submit student-mode";
+        submitBtn.innerHTML = "<span>Sign In as Student</span>";
+        nsutInput.placeholder = "e.g. 2024NSUT1001";
+        helperLabel.textContent = "Default Student Access";
+        helperBody.innerHTML = 'NSUT ID: <span class="cred-badge">2024NSUT1001</span> &nbsp;·&nbsp; Password: <span class="cred-badge">student123</span>';
+    } else {
+        adminTab.className = "tab-btn active admin";
+        studentTab.className = "tab-btn student";
+        badge.textContent = "Administrator Access";
+        subtitle.textContent = "Sign in with your NSUT Administrator ID & Password";
+        submitBtn.className = "btn-submit";
+        submitBtn.innerHTML = "<span>Sign In as Admin</span>";
+        nsutInput.placeholder = "e.g. ADMIN001";
+        helperLabel.textContent = "Default Admin Access";
+        helperBody.innerHTML = 'NSUT ID: <span class="cred-badge">ADMIN001</span> &nbsp;·&nbsp; Password: <span class="cred-badge">admin123</span>';
+    }
+}
+
+function autoFillDemoCreds() {
+    if (currentRole === "admin") {
+        document.getElementById("nsut_id").value = "ADMIN001";
+        document.getElementById("password").value = "admin123";
+    } else {
+        document.getElementById("nsut_id").value = "2024NSUT1001";
+        document.getElementById("password").value = "student123";
+    }
+}
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const nsut_id = document.getElementById("nsut_id").value.trim();
+    const password = document.getElementById("password").value;
+    const btn = document.getElementById("submitBtn");
+    const errorAlert = document.getElementById("errorAlert");
+    const successAlert = document.getElementById("successAlert");
+
+    errorAlert.style.display = "none";
+    successAlert.style.display = "none";
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Connecting...';
+
+    try {
+        const endpoint = currentRole === "admin" ? "/auth/admin/login" : "/auth/student/login";
+        let res;
+        try {
+            res = await fetch(API + endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nsut_id, password }),
+            });
+        } catch (netErr) {
+            throw new Error(`Cannot reach backend at ${API}. Please ensure FastAPI is running: "uvicorn app:app --port 8000"`);
+        }
+
+        const text = await res.text();
+        let data = {};
+        try {
+            data = JSON.parse(text);
+        } catch (jsonErr) {
+            if (res.status === 403 || text.includes("Forbidden")) {
+                throw new Error("Received Forbidden from static server. Run the backend with 'uvicorn app:app --port 8000' and open http://localhost:8000");
+            }
+            throw new Error(text || `Server returned status ${res.status}`);
+        }
+
+        if (!res.ok) {
+            throw new Error(data.detail || data.message || "Authentication failed. Please check credentials.");
+        }
+
+        successAlert.textContent = "Welcome in! Redirecting...";
+        successAlert.style.display = "block";
+
+        const isLiveServer = (window.location.port !== "8000" || window.location.protocol === "file:" || window.location.pathname.endsWith(".html"));
+
+        if (currentRole === "admin") {
+            sessionStorage.setItem("role", "admin");
+            sessionStorage.setItem("admin", JSON.stringify(data));
+            setTimeout(() => {
+                window.location.href = isLiveServer ? "admin.html" : "/admin";
+            }, 500);
+        } else {
+            sessionStorage.setItem("role", "student");
+            sessionStorage.setItem("student", JSON.stringify(data));
+            setTimeout(() => {
+                window.location.href = isLiveServer ? "student.html" : "/student";
+            }, 500);
+        }
+    } catch (err) {
+        errorAlert.textContent = err.message;
+        errorAlert.style.display = "block";
+        btn.disabled = false;
+        btn.innerHTML = currentRole === "admin" ? "<span>Sign In as Admin</span>" : "<span>Sign In as Student</span>";
+    }
+}
+
+function goHome() {
+    const isLiveServer = (window.location.port !== "8000" || window.location.protocol === "file:" || window.location.pathname.endsWith(".html"));
+    window.location.href = isLiveServer ? "index.html" : "/";
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

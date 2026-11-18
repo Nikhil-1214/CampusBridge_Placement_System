@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Panel — CampusBridge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <span class="header-logo">📚</span>
+        <div>
+            <span class="header-title" id="stu_name">Student Panel</span>
+            <span class="header-sub" id="stu_nsut_id">CampusBridge</span>
+        </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">
+        <span>↩</span> Sign Out
+    </button>
+</header>
+
+<div class="container">
+    <nav id="sidebar">
+        <div class="nav-section-label">MY ACCOUNT</div>
+        <button class="nav-btn active" onclick="showSection('profile', this)">
+            <span class="nav-icon">👤</span> Profile
+        </button>
+        <div class="nav-section-label">PLACEMENTS</div>
+        <button class="nav-btn" onclick="showSection('eligible_jobs', this)">
+            <span class="nav-icon">💼</span> Eligible Jobs
+        </button>
+        <button class="nav-btn" onclick="showSection('my_apps', this)">
+            <span class="nav-icon">📋</span> Applications
+        </button>
+        <button class="nav-btn" onclick="showSection('my_offers', this)">
+            <span class="nav-icon">🎁</span> Offers
+        </button>
+    </nav>
+
+    <main>
+        <!-- PROFILE -->
+        <div id="profile" class="section active">
+            <div class="section-header"><h2>My Profile</h2></div>
+            <div class="glass-card">
+                <div class="profile-card" id="profile_cards">
+                    <p style="color:rgba(255,255,255,0.4);">Loading profile...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ELIGIBLE JOBS -->
+        <div id="eligible_jobs" class="section">
+            <div class="section-header"><h2>Jobs I'm Eligible For</h2></div>
+            <div class="glass-card">
+                <button class="btn btn-blue" onclick="loadEligibleJobs()">↻ Refresh</button>
+            </div>
+            <div class="glass-card table-card">
+                <table id="ej_table"><thead><tr><th>Job ID</th><th>Company</th><th>Title</th><th>Package (LPA)</th><th>Action</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+
+        <!-- MY APPLICATIONS -->
+        <div id="my_apps" class="section">
+            <div class="section-header"><h2>My Applications</h2></div>
+            <div class="glass-card">
+                <button class="btn btn-blue" onclick="loadMyApps()">↻ Refresh</button>
+            </div>
+            <div class="glass-card table-card">
+                <table id="myapp_table"><thead><tr><th>App ID</th><th>Company</th><th>Job</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+
+        <!-- MY OFFERS -->
+        <div id="my_offers" class="section">
+            <div class="section-header"><h2>My Offers</h2></div>
+            <div class="glass-card">
+                <p id="no_offers" style="color:rgba(255,255,255,0.4);">Loading...</p>
+                <table id="myoffer_table" style="display:none;"><thead><tr><th>Company</th><th>LPA</th><th>Status</th><th>Action</th></tr></thead><tbody></tbody></table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="toast"></div>
+<script src="student.js"></script>
+</body>
+</html>
