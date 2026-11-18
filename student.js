@@ -3,7 +3,12 @@
    ═══════════════════════════════════════════════════════════════ */
 
 function getApiBase() {
-    if (window.location.port === "8000") {
+    if (window.location.protocol === "http:" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
+        if (window.location.port === "8000") {
+            return window.location.origin + "/api";
+        }
+    }
+    if (window.location.protocol === "https:" || window.location.port === "8000") {
         return window.location.origin + "/api";
     }
     const host = (window.location.hostname && window.location.hostname !== "") ? window.location.hostname : "127.0.0.1";

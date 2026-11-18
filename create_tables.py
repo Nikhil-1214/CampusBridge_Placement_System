@@ -165,7 +165,10 @@ TABLE_NAMES = [
 
 def create_tables():
     for t in TABLES:
-        cursor.execute(t)
+        try:
+            cursor.execute(t)
+        except Exception as e:
+            print("Table setup error:", e)
     server.commit()
     print("All tables are ready.")
 

@@ -26,6 +26,10 @@ def on_startup():
     except Exception as e:
         print("Note on startup table verification:", e)
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ── Router (Mounted both at /api and at root for full compatibility) ──
